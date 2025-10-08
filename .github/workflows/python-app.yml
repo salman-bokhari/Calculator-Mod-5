@@ -33,3 +33,8 @@ jobs:
       - name: Run tests with coverage
         run: |
           pytest --maxfail=1 --disable-warnings --cov=app --cov-report=xml
+
+      - name: Run tests with coverage
+        run: |
+          pytest --maxfail=1 --disable-warnings --cov=app
+          coverage report --fail-under=100
