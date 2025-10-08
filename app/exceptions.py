@@ -1,13 +1,8 @@
 class CalculatorError(Exception):
-    """Base class for calculator exceptions."""
+    """Base class for all calculator-related exceptions."""
     pass
 
 
-class InvalidInputError(CalculatorError):
-    """Raised when the user enters invalid input."""
-    pass
-
-
-class OperationError(CalculatorError):
-    """Raised when an invalid operation is requested."""
+class InvalidOperationError(CalculatorError):
+    """Raised when an invalid operation is attempted in the calculator."""
     pass
