@@ -25,7 +25,7 @@ def main(interactive=True, commands=None):
     If interactive=True → asks user input.
     If interactive=False → runs through provided `commands` (for testing).
     """
-    print("Simple Calculator REPL. Type 'quit' to exit.")
+    print("Simple Calculator REPL. Type 'quit' to exit.")  # pragma: no cover
 
     if not interactive:
         # Non-interactive mode for pytest
