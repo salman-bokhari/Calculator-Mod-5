@@ -39,19 +39,12 @@ class Root(Operation):
 
 def get_operation(operator: str) -> Optional[Operation]:
     """Return an instance of the correct operation."""
-    if operator == "+":
-        return Add()
-    elif operator == "-":
-        return Subtract()
-    elif operator == "*":
-        return Multiply()
-    elif operator == "/":
-        return Divide()
-    elif operator == "^":
-        return Power()
-    elif operator == "%":
-        return Modulo()
-    elif operator == "root":
-        return Root()
-    else:
-        return None  # pragma: no cover
+    return {
+        "+": Add,
+        "-": Subtract,
+        "*": Multiply,
+        "/": Divide,
+        "^": Power,
+        "%": Modulo,
+        "root": Root
+    }.get(operator, None)() if operator in {"+","-","*","/","^","%","root"} else None  # pragma: no cover
