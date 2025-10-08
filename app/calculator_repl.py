@@ -12,6 +12,8 @@ def calculate(a, op, b):
     elif op == '*':
         return multiply(a, b)
     elif op == '/':
+        if b == 0:
+            raise ZeroDivisionError("division by zero")
         return divide(a, b)
     else:
         raise InvalidOperationError(f"Invalid operation: {op}")

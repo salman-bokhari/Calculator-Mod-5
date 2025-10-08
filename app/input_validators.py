@@ -1,4 +1,4 @@
-from app.exceptions import InvalidInputError
+from app.exceptions import InvalidOperationError
 
 
 def validate_number(value):
@@ -6,9 +6,9 @@ def validate_number(value):
     try:
         return float(value)
     except ValueError:
-        raise InvalidInputError(f"Invalid number: {value}")
+        raise InvalidOperationError(f"Invalid number: {value}")
 
 
 def validate_numbers(a, b):
-    """Validate and return a tuple of two numbers."""
-    return validate_number(a), validate_number(b)
+    """Validate two inputs and return them as floats in a list."""
+    return [validate_number(a), validate_number(b)]
