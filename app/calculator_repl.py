@@ -16,7 +16,8 @@ def process_input(user_input):
             a = float(a_str)
             b = float(b_str)
         except ValueError:
-            raise InvalidOperationError(f"Invalid number: {a_str if not a_str.replace('.', '', 1).isdigit() else b_str}")
+            return "Invalid number input"
+
 
         op_map = {
             '+': "add",
