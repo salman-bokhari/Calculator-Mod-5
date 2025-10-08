@@ -1,71 +1,75 @@
+"""Calculator REPL (Read-Eval-Print Loop) module."""
+
+from app.calculation import Calculation
+from app.history import History
 from app.operations import add, subtract, multiply, divide
 from app.input_validators import validate_numbers
-from app.exceptions import InvalidInputError, InvalidOperationError
 
 
-def calculate(a, op, b):
-    """Performs the calculation and returns the result."""
-    if op == '+':
-        return add(a, b)
-    elif op == '-':
-        return subtract(a, b)
-    elif op == '*':
-        return multiply(a, b)
-    elif op == '/':
-        if b == 0:
-            raise ZeroDivisionError("division by zero")
-        return divide(a, b)
-    else:
-        raise InvalidOperationError(f"Invalid operation: {op}")
+def process_input(user_input: str):
+    """Process user input and return the result or message."""
+    parts = user_input.strip().split()
+
+    if len(parts) != 3:
+        return "Invalid input. Use format: <num1> <operator> <num2>"
+
+    num1, operator, num2 = parts
+
+    try:
+        num1, num2 = validate_numbers(num1, num2)
+    except ValueError as e:
+        return str(e)
+
+    operations = {
+        "+": add,
+        "-": subtract,
+        "*": multiply,
+        "/": divide,
+    }
+
+    if operator not in operations:
+        return "Unsupported operator. Use +, -, *, or /."
+
+    calc = Calculation(num1, num2, operations[operator])
+    result = calc.perform()
+    History.add_calculation(calc)
+    return f"Result: {result}"
 
 
-def main(interactive=True, commands=None):
-    """
-    Run the calculator REPL.
-    If interactive=True → asks user input.
-    If interactive=False → runs through provided `commands` (for testing).
-    """
-    print("Simple Calculator REPL. Type 'quit' to exit.")  # pragma: no cover
-
-    if not interactive:
-        # Non-interactive mode for pytest
-        results = []
-        for num1, op, num2 in commands:
-            try:
-                a, b = validate_numbers(num1, num2)
-                result = calculate(a, op, b)
-                results.append(result)
-            except Exception as e:
-                results.append(str(e))
-        return results
-
-    # Interactive mode — excluded entirely
-    # pragma: no cover start
-    while True:
-        try:
-            num1 = input("Enter first number: ")
-            if num1.lower() == 'quit':
-                break
-
-            op = input("Enter operation (+, -, *, /): ")
-            if op.lower() == 'quit':
-                break
-
-            num2 = input("Enter second number: ")
-            if num2.lower() == 'quit':
-                break
-
-            a, b = validate_numbers(num1, num2)
-            result = calculate(a, op, b)
-            print(f"Result: {result}")
-
-        except (InvalidInputError, InvalidOperationError, ZeroDivisionError) as e:
-            print(f"Error: {e}")
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-    # pragma: no cover end
+def show_history():
+    """Display calculation history."""
+    if not History.get_history():
+        return "No calculations yet."
+    lines = []
+    for i, calc in enumerate(History.get_history(), start=1):
+        lines.append(f"{i}: {calc}")
+    return "\n".join(lines)
 
 
-# pragma: no cover
-if __name__ == "__main__":
-    main()
+def clear_history():
+    """Clear all history."""
+    History.clear_history()
+    return "History cleared."
+
+
+def repl():  # pragma: no cover - interactive mode
+    """Interactive calculator REPL loop."""
+    print("Calculator REPL. Type 'quit' to exit, 'history' to see history.")  # pragma: no cover
+    while True:  # pragma: no cover
+        try:  # pragma: no cover
+            user_input = input(">> ").strip()  # pragma: no cover
+            if user_input.lower() in ("quit", "exit"):  # pragma: no cover
+                print("Goodbye!")  # pragma: no cover
+                break  # pragma: no cover
+            elif user_input.lower() == "history":  # pragma: no cover
+                print(show_history())  # pragma: no cover
+            elif user_input.lower() == "clear":  # pragma: no cover
+                print(clear_history())  # pragma: no cover
+            else:  # pragma: no cover
+                print(process_input(user_input))  # pragma: no cover
+        except Exception as e:  # pragma: no cover
+            print(f"Error: {e}")  # pragma: no cover
+
+
+if __name__ == "__main__":  # pragma: no cover
+    repl()  # pragma: no cover
