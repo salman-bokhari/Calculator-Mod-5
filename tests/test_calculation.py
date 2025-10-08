@@ -14,3 +14,12 @@ def test_unknown_op():
     calc = CalculatorFacade()
     with pytest.raises(InvalidOperationError):
         calc.perform('nope', '1','2')
+def test_invalid_operation(monkeypatch):
+    from app.calculation import Calculation
+    calc = Calculation(5, 3, "invalid")
+    try:
+        calc.perform()
+    except ValueError:
+        assert True
+    else:
+        assert False

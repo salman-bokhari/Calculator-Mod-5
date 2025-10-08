@@ -22,3 +22,7 @@ def test_factory():
     assert operation_factory('add').execute(1,2) == 3
     assert operation_factory('+').execute(2,3) == 5
     assert operation_factory('root').execute(16,4) == 2
+
+def test_divide_by_zero():
+    with pytest.raises(ZeroDivisionError):
+        divide(5, 0)
