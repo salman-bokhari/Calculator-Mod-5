@@ -31,5 +31,6 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --maxfail=1 --disable-warnings --cov=app --cov-report=term --cov-report=xml
-          coverage report --fail-under=100
+          pytest --maxfail=1 --disable-warnings \
+                 --cov=app --cov-report=term --cov-report=xml \
+                 --cov-fail-under=100
