@@ -1,30 +1,18 @@
 import pandas as pd
 
 class History:
-    _history_df = pd.DataFrame(columns=['a', 'op', 'b', 'result', 'type'])
+    def __init__(self):
+        self.df = pd.DataFrame(columns=["a", "b", "operation", "result"])
 
-    @classmethod
-    def add(cls, a, op, b, result, type_):
-        """Add an entry to history."""
-        cls._history_df = pd.concat([
-            cls._history_df,
-            pd.DataFrame([{'a': a, 'op': op, 'b': b, 'result': result, 'type': type_}])
-        ], ignore_index=True)
+    def add(self, a, op, b, result):
+        """Add a calculation to history."""
+        self.df.loc[len(self.df)] = {"a": a, "b": b, "operation": op, "result": result}
 
-    @classmethod
-    def get_history(cls):
-        if cls._history_df.empty:
-            return []
-        return cls._history_df.to_dict(orient='records')
+    def get_history(self):
+        return self.df
 
-    @classmethod
-    def clear_history(cls):
-        cls._history_df = cls._history_df.iloc[0:0]
+    def save(self, path):
+        self.df.to_csv(path, index=False)
 
-    @classmethod
-    def save(cls, path):
-        cls._history_df.to_csv(path, index=False)
-
-    @classmethod
-    def load(cls, path):
-        cls._history_df = pd.read_csv(path)
+    def load(self, path):
+        self.df = pd.read_csv(path)

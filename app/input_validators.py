@@ -1,4 +1,4 @@
-from app.exceptions import InvalidInputError, InvalidOperationError
+from app.exceptions import InvalidInputError
 
 def validate_number(value):
     """Ensure the provided input can be converted to a float."""
@@ -8,4 +8,5 @@ def validate_number(value):
         raise InvalidInputError(f"Invalid number: {value}")
 
 def validate_numbers(a, b):
+    """Validate two numbers and return as floats."""
     return validate_number(a), validate_number(b)
