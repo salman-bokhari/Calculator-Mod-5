@@ -1,31 +1,37 @@
-from app.operations import add, subtract, multiply, divide, power, modulo
+from datetime import datetime
+from app.operations import add, subtract, multiply, divide
 
 class Calculation:
-    def __init__(self, a, b, operation):
-        self.a = a
-        self.b = b
+    def __init__(self, lhs, rhs, operation):
+        self.lhs = lhs
+        self.rhs = rhs
         self.operation = operation
+        self.result = None
+        self.timestamp = datetime.now().isoformat()
 
     def perform(self):
-        if self.operation == "add":
-            return add(self.a, self.b)
-        elif self.operation == "subtract":
-            return subtract(self.a, self.b)
-        elif self.operation == "multiply":
-            return multiply(self.a, self.b)
-        elif self.operation == "divide":
-            return divide(self.a, self.b)
-        elif self.operation == "power":
-            return power(self.a, self.b)
-        elif self.operation == "modulo":
-            return modulo(self.a, self.b)
-        else:
-            raise ValueError(f"Invalid operation: {self.operation}")
+        """Perform the calculation based on the operation."""
+        ops = {
+            "add": add,
+            "subtract": subtract,
+            "multiply": multiply,
+            "divide": divide
+        }
+        func = ops.get(self.operation)
+        if not func:
+            raise ValueError(f"Unknown operation: {self.operation}")
+        self.result = func(self.lhs, self.rhs)
+        return self.result
 
     def to_dict(self):
+        """Return calculation details as a dictionary."""
         return {
-            "a": self.a,
-            "b": self.b,
-            "operation": self.operation,
-            "result": self.perform()
+            "lhs": self.lhs,
+            "op": self.operation,
+            "rhs": self.rhs,
+            "result": self.result,
+            "timestamp": self.timestamp
         }
+
+    def __repr__(self):  # pragma: no cover
+        return f"Calculation({self.lhs}, {self.rhs}, '{self.operation}') = {self.result}"
