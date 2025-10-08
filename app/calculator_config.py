@@ -3,4 +3,5 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-HISTORY_FILE = os.getenv("HISTORY_FILE", "history.csv")
+class CalculatorConfig:
+    HISTORY_FILE = os.getenv("HISTORY_FILE", "history.csv")

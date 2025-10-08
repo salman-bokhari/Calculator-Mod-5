@@ -1,4 +1,4 @@
-class Memento:
+class CalculatorMemento:
     def __init__(self, state):
         self.state = state
 
@@ -7,7 +7,7 @@ class Caretaker:
         self.history = []
 
     def save(self, state):
-        self.history.append(Memento(state))
+        self.history.append(CalculatorMemento(state))
 
     def undo(self):
         if self.history:
