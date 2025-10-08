@@ -1,40 +1,57 @@
-class Add:
-    def calculate(self, a, b):
+from __future__ import annotations
+from abc import ABC, abstractmethod
+from typing import Optional
+
+class Operation(ABC):
+    @abstractmethod
+    def calculate(self, a: float, b: float) -> float:
+        pass
+
+class Add(Operation):
+    def calculate(self, a: float, b: float) -> float:
         return a + b
 
-class Subtract:
-    def calculate(self, a, b):
+class Subtract(Operation):
+    def calculate(self, a: float, b: float) -> float:
         return a - b
 
-class Multiply:
-    def calculate(self, a, b):
+class Multiply(Operation):
+    def calculate(self, a: float, b: float) -> float:
         return a * b
 
-class Divide:
-    def calculate(self, a, b):
+class Divide(Operation):
+    def calculate(self, a: float, b: float) -> float:
         if b == 0:
-            raise ZeroDivisionError("Division by zero")
+            raise ZeroDivisionError("Cannot divide by zero")
         return a / b
 
-class Power:
-    def calculate(self, a, b):
+class Power(Operation):
+    def calculate(self, a: float, b: float) -> float:
         return a ** b
 
-class Root:
-    def calculate(self, a, b):
-        if b == 0:
-            raise ZeroDivisionError("Root degree cannot be zero")
+class Modulo(Operation):
+    def calculate(self, a: float, b: float) -> float:
+        return a % b
+
+class Root(Operation):
+    def calculate(self, a: float, b: float) -> float:
         return a ** (1 / b)
 
-def get_operation(op):
-    ops = {
-        "+": Add,
-        "-": Subtract,
-        "*": Multiply,
-        "/": Divide,
-        "^": Power,
-        "root": Root
-    }
-    if op not in ops:
-        raise ValueError(f"Unsupported operator: {op}")
-    return ops[op]
+def get_operation(operator: str) -> Optional[Operation]:
+    """Return an instance of the correct operation."""
+    if operator == "+":
+        return Add()
+    elif operator == "-":
+        return Subtract()
+    elif operator == "*":
+        return Multiply()
+    elif operator == "/":
+        return Divide()
+    elif operator == "^":
+        return Power()
+    elif operator == "%":
+        return Modulo()
+    elif operator == "root":
+        return Root()
+    else:
+        return None  # pragma: no cover

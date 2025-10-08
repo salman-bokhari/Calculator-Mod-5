@@ -1,16 +1,16 @@
 import pandas as pd
+from app.calculator_config import CalculatorConfig
 
 class History:
-    df = pd.DataFrame(columns=["a", "operator", "b", "result"])
+    df = pd.DataFrame()
+    file = CalculatorConfig().HISTORY_FILE
 
     @classmethod
-    def add(cls, a, op, b, result):
+    def add(cls, id, op, a, b, result):
         cls.df = pd.concat([cls.df, pd.DataFrame([{
-            "a": a,
-            "operator": op,
-            "b": b,
-            "result": result
+            'id': id, 'operation': op, 'a': a, 'b': b, 'result': result
         }])], ignore_index=True)
+        cls.save_history()
 
     @classmethod
     def get_history(cls):
@@ -19,11 +19,15 @@ class History:
     @classmethod
     def clear_history(cls):
         cls.df = cls.df.iloc[0:0]
+        cls.save_history()
 
     @classmethod
-    def save(cls, path):
-        cls.df.to_csv(path, index=False)
+    def save_history(cls):
+        cls.df.to_csv(cls.file, index=False)
 
     @classmethod
-    def load(cls, path):
-        cls.df = pd.read_csv(path)
+    def load_history(cls):
+        try:
+            cls.df = pd.read_csv(cls.file)
+        except FileNotFoundError:
+            cls.df = pd.DataFrame(columns=['id', 'operation', 'a', 'b', 'result'])
