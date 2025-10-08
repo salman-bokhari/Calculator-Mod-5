@@ -1,33 +1,25 @@
 import pandas as pd
-from app.calculator_config import CalculatorConfig
 
 class History:
-    df = pd.DataFrame()
-    file = CalculatorConfig().HISTORY_FILE
+    _history = pd.DataFrame(columns=["a", "operator", "b", "result", "timestamp"])
 
     @classmethod
-    def add(cls, id, op, a, b, result):
-        cls.df = pd.concat([cls.df, pd.DataFrame([{
-            'id': id, 'operation': op, 'a': a, 'b': b, 'result': result
-        }])], ignore_index=True)
-        cls.save_history()
+    def add(cls, a, operator, b, result, timestamp):
+        cls._history.loc[len(cls._history)] = [a, operator, b, result, timestamp]
 
     @classmethod
-    def get_history(cls):
-        return cls.df.copy()
+    def show_history(cls):
+        return cls._history.copy()
 
     @classmethod
     def clear_history(cls):
-        cls.df = cls.df.iloc[0:0]
-        cls.save_history()
+        cls._history = pd.DataFrame(columns=cls._history.columns)
 
     @classmethod
-    def save_history(cls):
-        cls.df.to_csv(cls.file, index=False)
+    def save(cls, path: str):
+        cls._history.to_csv(path, index=False)
 
     @classmethod
-    def load_history(cls):
-        try:
-            cls.df = pd.read_csv(cls.file)
-        except FileNotFoundError:
-            cls.df = pd.DataFrame(columns=['id', 'operation', 'a', 'b', 'result'])
+    def load(cls, path: str):
+        cls._history = pd.read_csv(path)
+        return cls._history.copy()  # <-- return DataFrame

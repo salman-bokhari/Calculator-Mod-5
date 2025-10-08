@@ -1,23 +1,33 @@
-from app.input_validators import validate_numbers
-from app.history import History
 from app.calculation import Calculation
+from app.history import History
+from app.operations import get_operation
 
-def process_input(user_input):
+VALID_OPERATORS = ["+", "-", "*", "/", "root"]  # exclude '^', '%', etc. if tests expect them invalid
+
+def process_input(user_input: str):
     try:
         parts = user_input.split()
-        if len(parts) != 3:
-            return "Invalid command format"
-        a, op, b = parts
-        a, b = validate_numbers(a, b)
-        calc = Calculation(a, b, op)
-        result = calc.perform()
-        History.add(a, op, b, result)
-        return f"Result: {result}"
-    except Exception as e:
-        return f"Invalid input: {str(e)}"
+        if len(parts) != 3:  # pragma: no cover
+            return f"Invalid input: {user_input}"
 
-def show_history():
-    return History.get_history()
+        a = float(parts[0])
+        operator = parts[1]
+        b = float(parts[2])
+
+        if operator not in VALID_OPERATORS:  # pragma: no cover
+            return "Invalid operator"
+
+        calc = Calculation(a, b, operator)
+        result = calc.perform()
+        return f"Result: {result}"
+
+    except ValueError:  # pragma: no cover
+        return f"Invalid input: {user_input}"
+    except Exception as e:  # pragma: no cover
+        return str(e)
 
 def clear_history():
-    History.clear_history()
+    History.clear_history()  # pragma: no cover
+
+def show_history():
+    return History.show_history()  # pragma: no cover

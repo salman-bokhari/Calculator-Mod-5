@@ -1,15 +1,19 @@
 class CalculatorMemento:
-    def __init__(self, state=None):
-        self.state = state or {}
-
-class Caretaker:
+    """
+    Implements the Memento pattern to save and restore calculator state.
+    """
     def __init__(self):
-        self.history = []
+        self._state = None
 
-    def save(self, state):
-        self.history.append(CalculatorMemento(state.copy()))
+    def save_state(self, state):
+        """
+        Save the provided state.
+        """
+        self._state = state
 
-    def undo(self):
-        if self.history:
-            return self.history.pop().state
-        return {}
+    def restore_state(self):
+        """
+        Restore the previously saved state.
+        Returns None if no state was saved.
+        """
+        return self._state
