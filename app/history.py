@@ -1,42 +1,35 @@
-import json
-import os
-
+"""History module for tracking calculator operations."""
+import pandas as pd
 
 class History:
-    _history = []
+    """Keeps track of calculation history and allows saving/loading."""
 
     def __init__(self):
-        """Initialize history instance."""
-        self._data = []
+        # Create a DataFrame to store operations
+        self.df = pd.DataFrame(columns=["a", "op", "b", "result", "tag"])
 
     def add(self, a, op, b, result, tag=None):
-        """Add an entry to this instance and class-level history."""
-        entry = {"a": a, "op": op, "b": b, "result": result, "tag": tag}
-        self._data.append(entry)
-        History._history.append(entry)
-
-    @staticmethod
-    def add_history(entry):
-        """Add a plain string entry (for REPL)."""
-        History._history.append(entry)
-
-    @staticmethod
-    def get_history():
-        """Return global history list copy."""
-        return History._history.copy()
-
-    @staticmethod
-    def clear_history():
-        """Clears all history entries."""
-        History._history = []
+        """Add a calculation entry to history."""
+        new_entry = {"a": a, "op": op, "b": b, "result": result, "tag": tag}
+        self.df = pd.concat([self.df, pd.DataFrame([new_entry])], ignore_index=True)
 
     def save(self, path):
-        """Save instance history to a JSON file."""
-        with open(path, "w") as f:
-            json.dump(self._data, f)
+        """Save history to a CSV file."""
+        self.df.to_csv(path, index=False)
 
     def load(self, path):
-        """Load instance history from JSON file."""
-        if os.path.exists(path):
-            with open(path, "r") as f:
-                self._data = json.load(f)
+        """Load history from a CSV file."""
+        self.df = pd.read_csv(path)
+
+    def clear(self):
+        """Clear the history."""
+        self.df = pd.DataFrame(columns=["a", "op", "b", "result", "tag"])
+
+    def __len__(self):
+        """Return number of entries."""
+        return len(self.df)
+
+    def __iter__(self):
+        """Iterate over history rows as dictionaries."""
+        for _, row in self.df.iterrows():
+            yield row.to_dict()
