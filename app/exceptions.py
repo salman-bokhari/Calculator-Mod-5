@@ -1,5 +1,3 @@
-# app/exceptions.py
-
 class CalculatorError(Exception):
     """Base class for all calculator-related exceptions."""
     pass
