@@ -1,41 +1,23 @@
-import csv
+import pandas as pd
+from pathlib import Path
 
 class History:
-    def __init__(self):
-        self._history = []
+    def __init__(self, csv_path=None):
+        self.csv_path = Path(csv_path) if csv_path else None
+        self.df = pd.DataFrame(columns=['lhs','op','rhs','result','timestamp'])
 
-    def add(self, operand_a=None, operation=None, operand_b=None, result=None, timestamp=None):
-        """Add a calculation record to history."""
-        record = {
-            "operand_a": operand_a,
-            "operation": operation,
-            "operand_b": operand_b,
-            "result": result,
-            "timestamp": timestamp
-        }
-        self._history.append(record)
+    def add(self, lhs, op, rhs, result, timestamp):
+        row = dict(lhs=lhs, op=op, rhs=rhs, result=result, timestamp=timestamp)
+        self.df = pd.concat([self.df, pd.DataFrame([row])], ignore_index=True)
+        return row
 
-    def all(self):
-        """Return all history records."""
-        return self._history
+    def save(self, path=None):
+        path = Path(path or self.csv_path or 'history.csv')
+        self.df.to_csv(path, index=False)
+        return path
 
-    def clear(self):
-        """Clear the entire history."""
-        self._history.clear()
-
-    def get_history(self):
-        """Return the calculation history (alias for all)."""
-        return self._history
-
-    def save(self, filepath):  # pragma: no cover
-        """Save history to a CSV file."""
-        with open(filepath, 'w', newline='') as f:
-            writer = csv.DictWriter(f, fieldnames=["operand_a", "operation", "operand_b", "result", "timestamp"])
-            writer.writeheader()
-            writer.writerows(self._history)
-
-    def load(self, filepath):  # pragma: no cover
-        """Load history from a CSV file."""
-        with open(filepath, 'r') as f:
-            reader = csv.DictReader(f)
-            self._history = [row for row in reader]
+    def load(self, path=None):
+        path = Path(path or self.csv_path or 'history.csv')
+        if path.exists():
+            self.df = pd.read_csv(path)
+        return self.df
