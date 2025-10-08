@@ -1,23 +1,59 @@
 import pandas as pd
-from pathlib import Path
+from datetime import datetime
 
 class History:
-    def __init__(self, csv_path=None):
-        self.csv_path = Path(csv_path) if csv_path else None
-        self.df = pd.DataFrame(columns=['lhs','op','rhs','result','timestamp'])
+    """Manages calculator operation history using a pandas DataFrame."""
 
-    def add(self, lhs, op, rhs, result, timestamp):
-        row = dict(lhs=lhs, op=op, rhs=rhs, result=result, timestamp=timestamp)
+    def __init__(self):
+        # Initialize an empty DataFrame for storing history
+        self.df = pd.DataFrame(columns=["lhs", "op", "rhs", "result", "timestamp"])
+
+    def add(self, *args, **kwargs):
+        """
+        Add a calculation record to the history.
+        Supports both:
+          - history.add(lhs, op, rhs, result, timestamp)
+          - history.add(calc_dict)
+        """
+        # If a single dictionary is passed (e.g., calc.to_dict())
+        if args and isinstance(args[0], dict):
+            row = args[0]
+        else:
+            # Unpack individual arguments
+            if len(args) == 5:
+                lhs, op, rhs, result, timestamp = args
+                row = {
+                    "lhs": lhs,
+                    "op": op,
+                    "rhs": rhs,
+                    "result": result,
+                    "timestamp": timestamp,
+                }
+            else:
+                # In case someone used keyword arguments
+                row = {
+                    "lhs": kwargs.get("lhs"),
+                    "op": kwargs.get("op"),
+                    "rhs": kwargs.get("rhs"),
+                    "result": kwargs.get("result"),
+                    "timestamp": kwargs.get("timestamp", datetime.now().isoformat()),
+                }
+
+        # Add the row to the DataFrame
         self.df = pd.concat([self.df, pd.DataFrame([row])], ignore_index=True)
-        return row
 
-    def save(self, path=None):
-        path = Path(path or self.csv_path or 'history.csv')
-        self.df.to_csv(path, index=False)
-        return path
+    def get_all(self):
+        """Return all history records."""
+        return self.df.to_dict(orient="records")
 
-    def load(self, path=None):
-        path = Path(path or self.csv_path or 'history.csv')
-        if path.exists():
-            self.df = pd.read_csv(path)
-        return self.df
+    def clear(self):
+        """Clear all records from history."""
+        self.df = pd.DataFrame(columns=["lhs", "op", "rhs", "result", "timestamp"])
+
+    def __len__(self):
+        """Return the number of records in history."""
+        return len(self.df)
+
+    def __repr__(self):
+        """String representation of the history."""
+        return self.df.to_string(index=False)
