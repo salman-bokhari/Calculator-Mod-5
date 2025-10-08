@@ -1,24 +1,41 @@
-from app.calculator_repl import main
-from unittest.mock import patch
+from app.operations import add, subtract, multiply, divide
+from app.input_validators import validate_numbers
+from app.exceptions import InvalidInputError, InvalidOperationError
 
-def test_main_quit(monkeypatch):
-    # Simulate user typing 'quit'
-    monkeypatch.setattr('builtins.input', lambda _: 'quit')
-    main()  # should exit gracefully without error
 
-def test_main_valid_addition(monkeypatch):
-    inputs = iter(['5', '+', '2', 'quit'])
-    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-    main()  # simulate REPL session performing 5 + 2
+def main():
+    print("Simple Calculator REPL. Type 'quit' to exit.")
 
-def test_main_invalid_input(monkeypatch):
-    # Input invalid data first, then quit
-    inputs = iter(['abc', 'quit'])
-    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-    main()
+    while True:
+        try:
+            num1 = input("Enter first number: ")
+            if num1.lower() == 'quit':
+                break
 
-def test_main_invalid_operation(monkeypatch):
-    # Input valid number but invalid operator
-    inputs = iter(['3', '%', '2', 'quit'])
-    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-    main()
+            op = input("Enter operation (+, -, *, /): ")
+            if op.lower() == 'quit':
+                break
+
+            num2 = input("Enter second number: ")
+            if num2.lower() == 'quit':
+                break
+
+            a, b = validate_numbers(num1, num2)
+
+            if op == '+':
+                result = add(a, b)
+            elif op == '-':
+                result = subtract(a, b)
+            elif op == '*':
+                result = multiply(a, b)
+            elif op == '/':
+                result = divide(a, b)
+            else:
+                raise InvalidOperationError(f"Invalid operation: {op}")
+
+            print(f"Result: {result}")
+
+        except (InvalidInputError, InvalidOperationError, ZeroDivisionError) as e:
+            print(f"Error: {e}")
+        except Exception as e:
+            print(f"Unexpected error: {e}")

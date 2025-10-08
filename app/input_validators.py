@@ -1,25 +1,14 @@
-import pytest
-from app.input_validators import validate_number, validate_numbers
-from app.exceptions import InvalidInputError, InvalidOperationError
+from app.exceptions import InvalidInputError
 
-def test_validate_number_valid():
-    assert validate_number("5") == 5.0
 
-def test_validate_number_invalid():
-    with pytest.raises(InvalidInputError):
-        validate_number("abc")
-
-def test_validate_numbers_valid():
-    assert validate_numbers("3", "4") == (3.0, 4.0)
-
-def test_validate_numbers_invalid():
-    with pytest.raises(InvalidInputError):
-        validate_numbers("x", "4")
-
-def test_invalid_operation():
-    # Example of operation validator raising InvalidOperationError
-    from app.operations import add
+def validate_number(value):
+    """Ensure the provided input can be converted to a float."""
     try:
-        raise InvalidOperationError("Bad op")
-    except InvalidOperationError:
-        assert True
+        return float(value)
+    except ValueError:
+        raise InvalidInputError(f"Invalid number: {value}")
+
+
+def validate_numbers(a, b):
+    """Validate and return a tuple of two numbers."""
+    return validate_number(a), validate_number(b)
