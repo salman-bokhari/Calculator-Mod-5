@@ -7,4 +7,4 @@ def validate_number(value):
         raise InvalidInputError("Invalid number input")
 
 def validate_numbers(a, b):
-    return [validate_number(a), validate_number(b)]  # return list to match tests
+    return [validate_number(a), validate_number(b)]

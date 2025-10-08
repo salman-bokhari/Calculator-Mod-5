@@ -1,8 +1,8 @@
 class CalculatorError(Exception):
     pass
 
-class InvalidInputError(CalculatorError):
+class InvalidOperationError(CalculatorError):
     pass
 
-class InvalidOperationError(CalculatorError):
+class InvalidInputError(CalculatorError):
     pass

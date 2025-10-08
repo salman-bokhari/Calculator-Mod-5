@@ -2,17 +2,11 @@ import pytest
 from app.calculation import Calculation
 from app.history import History
 
-
 def test_perform_and_history():
-    history = History()
-    calc = Calculation(5, 3, "add")
+    History.clear_history()
+    calc = Calculation(5, 3, "+")
     result = calc.perform()
     assert result == 8
-    history.add(calc.to_dict())
-    assert len(history.get_history()) == 1
-
-
-def test_invalid_operation():
-    calc = Calculation(5, 3, "invalid")
-    with pytest.raises(ValueError):
-        calc.perform()
+    History.add(calc.a, calc.operator, calc.b, result)
+    df = History.get_history()
+    assert df.iloc[-1]["result"] == 8

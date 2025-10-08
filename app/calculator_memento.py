@@ -1,9 +1,15 @@
-class CalculatorMemento:
+class Memento:
+    def __init__(self, state):
+        self.state = state
+
+class Caretaker:
     def __init__(self):
-        self._state = None
+        self.history = []
 
-    def save_state(self, state):
-        self._state = state
+    def save(self, state):
+        self.history.append(Memento(state))
 
-    def restore_state(self):
-        return self._state
+    def undo(self):
+        if self.history:
+            return self.history.pop().state
+        return None

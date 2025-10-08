@@ -1,16 +1,6 @@
-import yaml
 import os
+from dotenv import load_dotenv
 
-class CalculatorConfig:
-    def __init__(self, config_path="config.yaml"):
-        self.config_path = config_path
-        self.config = self.load_config()
+load_dotenv()
 
-    def load_config(self):
-        if not os.path.exists(self.config_path):
-            return {}
-        try:
-            with open(self.config_path, "r") as f:
-                return yaml.safe_load(f) or {}
-        except Exception:
-            raise
+HISTORY_FILE = os.getenv("HISTORY_FILE", "history.csv")

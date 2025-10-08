@@ -1,27 +1,19 @@
-from app.operations import add, subtract, multiply, divide
+from app.operations import get_operation
 
 class Calculation:
-    def __init__(self, a, b, operation):
+    def __init__(self, a, b, operator):
         self.a = a
         self.b = b
-        self.operation = operation
+        self.operator = operator
 
     def perform(self):
-        ops = {
-            "add": add,
-            "subtract": subtract,
-            "multiply": multiply,
-            "divide": divide
-        }
-        func = ops.get(self.operation)
-        if not func:
-            raise ValueError(f"Unknown operation: {self.operation}")
-        return func(self.a, self.b)
+        op_class = get_operation(self.operator)
+        operation = op_class()
+        return operation.calculate(self.a, self.b)
 
     def to_dict(self):
         return {
             "a": self.a,
             "b": self.b,
-            "operation": self.operation,
-            "result": self.perform()
+            "operator": self.operator,
         }
