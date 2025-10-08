@@ -28,7 +28,6 @@ jobs:
       - name: Add app to PYTHONPATH
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
-          echo "PYTHONPATH is set to $(pwd)"
 
       - name: Run tests with coverage
         run: |
