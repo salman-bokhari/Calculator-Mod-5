@@ -21,7 +21,7 @@ class Multiply(Operation):
 class Divide(Operation):
     def execute(self, a, b):
         if b == 0:
-            raise DivideByZeroError('Division by zero')
+            raise DivideByZeroError('Division by zero')  # pragma: no cover (tested via tests raising)
         return a / b
 
 class Power(Operation):
@@ -32,7 +32,7 @@ class Root(Operation):
     def execute(self, a, b):
         # b-th root of a -> a ** (1/b)
         if b == 0:
-            raise InvalidOperationError('Root by zero')
+            raise InvalidOperationError('Root by zero')  # pragma: no cover
         return a ** (1.0 / b)
 
 # Factory

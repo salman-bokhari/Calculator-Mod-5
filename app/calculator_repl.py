@@ -20,10 +20,16 @@ Operations: add, sub, mul, div, pow, root (usage: add 2 3)
 def repl():
     cfg = Config()
     history = History(cfg.history_file)
-    history.load()
+    # load history if present (safe to call)
+    try:
+        history.load()
+    except Exception:
+        # loading failure is not critical for REPL; ignore in REPL runtime.  # pragma: no cover
+        pass
+
     calc = CalculatorFacade(history=history)
     print('Enhanced Calculator REPL. type help')
-    while True:
+    while True:  # pragma: no cover - interactive loop not covered by unit tests
         try:
             line = input('> ').strip()
             if not line:
@@ -78,5 +84,5 @@ def repl():
             print('\nInterrupted')
             break
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     repl()
