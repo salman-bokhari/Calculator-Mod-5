@@ -40,6 +40,7 @@ def main(interactive=True, commands=None):
         return results
 
     # Interactive mode for manual use
+    # pragma: no cover
     while True:
         try:
             num1 = input("Enter first number: ")
