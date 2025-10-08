@@ -1,67 +1,44 @@
+"""REPL module for calculator operations and user interaction."""
 from app.calculation import Calculation
-from app.operations import add, subtract, multiply, divide
+from app.input_validators import validate_expression
 from app.history import History
-from app.exceptions import InvalidInputError, InvalidOperationError
+from app.exceptions import CalculatorError
 
 
-def process_input(user_input):
-    """Parse and process a single calculation command string."""
+def process_input(user_input: str) -> str:
+    """Process a single calculator command string."""
+    user_input = user_input.strip().lower()
+    if user_input in ("exit", "quit"):
+        return "Exiting calculator..."
+
+    if user_input == "history":
+        hist = History.get_instance()
+        if len(hist) == 0:
+            return "History is empty."
+        return "\n".join(f"{h['a']} {h['op']} {h['b']} = {h['result']}" for h in hist)
+
+    if user_input == "clear history":
+        History.clear_history()
+        return "History cleared."
+
     try:
-        parts = user_input.strip().split()
-        if len(parts) != 3:
-            return "Invalid input format. Use: <num1> <op> <num2>"
-
-        a_str, op, b_str = parts
-        try:
-            a = float(a_str)
-            b = float(b_str)
-        except ValueError:
-            return "Invalid number input"
-
-
-        op_map = {
-            '+': "add",
-            '-': "subtract",
-            '*': "multiply",
-            '/': "divide"
-        }
-
-        if op not in op_map:
-            return f"Unsupported operator: {op}"
-
-        operation_name = op_map[op]
-        calc = Calculation(a, b, operation_name)
+        a, op, b = validate_expression(user_input)
+        calc = Calculation(a, b, op)
         result = calc.perform()
-        History.add_history(f"{a} {op} {b} = {result}")
+        History.add_history(calc.to_dict())
         return f"Result: {result}"
-
-    except (InvalidInputError, InvalidOperationError) as e:
-        return str(e)
-    except ZeroDivisionError:
-        return "Error: Division by zero."
+    except CalculatorError as e:
+        return f"Error: {e}"
     except Exception as e:
         return f"Unexpected error: {e}"
 
 
-def show_history():
-    """Return calculation history as string."""
-    hist = History.get_history()
-    if not hist:
-        return "No calculations yet."
-    return "\n".join(f"{i + 1}: {h}" for i, h in enumerate(hist))
-
-
-def clear_history():
-    """Clear the calculator history."""
-    History.clear_history()
-    return "History cleared."
-
-
-def repl():  # pragma: no cover
-    """Run interactive REPL."""
-    print("Simple Calculator REPL. Type 'quit' to exit.")
+def run_repl():
+    """Run interactive REPL loop."""
+    print("Welcome to the Calculator! Type 'exit' to quit.")
     while True:
         user_input = input(">>> ")
-        if user_input.lower() in {"quit", "exit"}:
+        response = process_input(user_input)
+        print(response)
+        if "Exiting" in response:
             break
-        print(process_input(user_input))
