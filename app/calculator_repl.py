@@ -1,49 +1,24 @@
-from app.calculation import Calculation
-from app.history import History
-from app.input_validators import validate_number
-from app.exceptions import InvalidInputError
+from app.calculator_repl import main
+from unittest.mock import patch
 
+def test_main_quit(monkeypatch):
+    # Simulate user typing 'quit'
+    monkeypatch.setattr('builtins.input', lambda _: 'quit')
+    main()  # should exit gracefully without error
 
-class CalculatorREPL:
-    def __init__(self):
-        self.history = History()
+def test_main_valid_addition(monkeypatch):
+    inputs = iter(['5', '+', '2', 'quit'])
+    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+    main()  # simulate REPL session performing 5 + 2
 
-    def perform_and_store(self, lhs, rhs, op):
-        try:
-            lhs = validate_number(lhs)
-            rhs = validate_number(rhs)
-        except ValueError as e:
-            raise InvalidInputError(str(e))
+def test_main_invalid_input(monkeypatch):
+    # Input invalid data first, then quit
+    inputs = iter(['abc', 'quit'])
+    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+    main()
 
-        calc = Calculation(lhs, rhs, op)
-        result = calc.perform()
-        self.history.add(**calc.to_dict())
-        return result
-
-    def get_history(self):
-        return self.history.df.to_dict(orient="records")
-
-    def run(self):  # pragma: no cover
-        print("Simple Calculator. Type 'exit' to quit.")
-        while True:
-            lhs = input("Enter first number: ")
-            if lhs.lower() == "exit":
-                break
-            rhs = input("Enter second number: ")
-            if rhs.lower() == "exit":
-                break
-            op = input("Enter operation (add, subtract, multiply, divide): ").lower()
-            if op == "exit":
-                break
-            try:
-                result = self.perform_and_store(lhs, rhs, op)
-                print(f"Result: {result}")
-            except Exception as e:
-                print(f"Error: {e}")
-
-def main():  # pragma: no cover
-    """Entry point for running the calculator REPL."""
-    CalculatorREPL().run()
-
-if __name__ == "__main__":  # pragma: no cover
+def test_main_invalid_operation(monkeypatch):
+    # Input valid number but invalid operator
+    inputs = iter(['3', '%', '2', 'quit'])
+    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
     main()
