@@ -17,8 +17,18 @@ It features a REPL (Read-Eval-Print Loop) interface and keeps a history of calcu
 
 ## Setup & Run Locally
 
-1. **Clone the repository**
+```bash
+git clone https://github.com/gshab9/Module-5-Assignment
+cd Module-5-Assignment
+python -m venv venv
+source venv/bin/activate      # macOS/Linux
+venv\Scripts\activate         # Windows
+pip install -r requirements.txt
+python -m app.calculator_repl
+
+## Test Locally
 
 ```bash
-git clone <repository_url>
-cd Calculator-Mod-5
+
+pytest --cov=app tests/
+coverage report
