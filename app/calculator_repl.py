@@ -1,75 +1,66 @@
-"""Calculator REPL (Read-Eval-Print Loop) module."""
-
 from app.calculation import Calculation
-from app.history import History
 from app.operations import add, subtract, multiply, divide
-from app.input_validators import validate_numbers
+from app.history import History
+from app.exceptions import InvalidInputError, InvalidOperationError
 
 
-def process_input(user_input: str):
-    """Process user input and return the result or message."""
-    parts = user_input.strip().split()
-
-    if len(parts) != 3:
-        return "Invalid input. Use format: <num1> <operator> <num2>"
-
-    num1, operator, num2 = parts
-
+def process_input(user_input):
+    """Parse and process a single calculation command string."""
     try:
-        num1, num2 = validate_numbers(num1, num2)
-    except ValueError as e:
+        parts = user_input.strip().split()
+        if len(parts) != 3:
+            return "Invalid input format. Use: <num1> <op> <num2>"
+
+        a_str, op, b_str = parts
+        try:
+            a = float(a_str)
+            b = float(b_str)
+        except ValueError:
+            raise InvalidOperationError(f"Invalid number: {a_str if not a_str.replace('.', '', 1).isdigit() else b_str}")
+
+        op_map = {
+            '+': "add",
+            '-': "subtract",
+            '*': "multiply",
+            '/': "divide"
+        }
+
+        if op not in op_map:
+            return f"Unsupported operator: {op}"
+
+        operation_name = op_map[op]
+        calc = Calculation(a, b, operation_name)
+        result = calc.perform()
+        History.add_history(f"{a} {op} {b} = {result}")
+        return f"Result: {result}"
+
+    except (InvalidInputError, InvalidOperationError) as e:
         return str(e)
-
-    operations = {
-        "+": add,
-        "-": subtract,
-        "*": multiply,
-        "/": divide,
-    }
-
-    if operator not in operations:
-        return "Unsupported operator. Use +, -, *, or /."
-
-    calc = Calculation(num1, num2, operations[operator])
-    result = calc.perform()
-    History.add_calculation(calc)
-    return f"Result: {result}"
+    except ZeroDivisionError:
+        return "Error: Division by zero."
+    except Exception as e:
+        return f"Unexpected error: {e}"
 
 
 def show_history():
-    """Display calculation history."""
-    if not History.get_history():
+    """Return calculation history as string."""
+    hist = History.get_history()
+    if not hist:
         return "No calculations yet."
-    lines = []
-    for i, calc in enumerate(History.get_history(), start=1):
-        lines.append(f"{i}: {calc}")
-    return "\n".join(lines)
+    return "\n".join(f"{i + 1}: {h}" for i, h in enumerate(hist))
 
 
 def clear_history():
-    """Clear all history."""
+    """Clear the calculator history."""
     History.clear_history()
     return "History cleared."
 
 
-def repl():  # pragma: no cover - interactive mode
-    """Interactive calculator REPL loop."""
-    print("Calculator REPL. Type 'quit' to exit, 'history' to see history.")  # pragma: no cover
-    while True:  # pragma: no cover
-        try:  # pragma: no cover
-            user_input = input(">> ").strip()  # pragma: no cover
-            if user_input.lower() in ("quit", "exit"):  # pragma: no cover
-                print("Goodbye!")  # pragma: no cover
-                break  # pragma: no cover
-            elif user_input.lower() == "history":  # pragma: no cover
-                print(show_history())  # pragma: no cover
-            elif user_input.lower() == "clear":  # pragma: no cover
-                print(clear_history())  # pragma: no cover
-            else:  # pragma: no cover
-                print(process_input(user_input))  # pragma: no cover
-        except Exception as e:  # pragma: no cover
-            print(f"Error: {e}")  # pragma: no cover
-
-
-if __name__ == "__main__":  # pragma: no cover
-    repl()  # pragma: no cover
+def repl():  # pragma: no cover
+    """Run interactive REPL."""
+    print("Simple Calculator REPL. Type 'quit' to exit.")
+    while True:
+        user_input = input(">>> ")
+        if user_input.lower() in {"quit", "exit"}:
+            break
+        print(process_input(user_input))
