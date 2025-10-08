@@ -26,6 +26,8 @@ venv\Scripts\activate         # Windows
 pip install -r requirements.txt
 python -m app.calculator_repl
 
+---
+
 ## Test Locally
 
 ```bash
