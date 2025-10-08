@@ -1,9 +1,13 @@
 class CalculatorError(Exception):
-    """Base calculator exception."""
+    """Base class for calculator exceptions."""
     pass
 
-class InvalidOperationError(CalculatorError):
+
+class InvalidInputError(CalculatorError):
+    """Raised when the user enters invalid input."""
     pass
 
-class DivideByZeroError(CalculatorError):
+
+class OperationError(CalculatorError):
+    """Raised when an invalid operation is requested."""
     pass

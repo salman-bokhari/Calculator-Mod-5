@@ -1,14 +1,20 @@
 from app.calculation import Calculation
 from app.history import History
 from app.input_validators import validate_number
+from app.exceptions import InvalidInputError
+
 
 class CalculatorREPL:
     def __init__(self):
         self.history = History()
 
     def perform_and_store(self, lhs, rhs, op):
-        lhs = validate_number(lhs)
-        rhs = validate_number(rhs)
+        try:
+            lhs = validate_number(lhs)
+            rhs = validate_number(rhs)
+        except ValueError as e:
+            raise InvalidInputError(str(e))
+
         calc = Calculation(lhs, rhs, op)
         result = calc.perform()
         self.history.add(**calc.to_dict())
