@@ -1,16 +1,11 @@
 import pytest
-from app.input_validators import parse_number, parse_tokens
-from app.exceptions import CalculatorError
+from app.input_validators import validate_numbers
+from app.exceptions import InvalidOperationError
 
-@pytest.mark.parametrize('s,expected', [
-    ('1', 1), ('2.5', 2.5), ('-3', -3), ('0', 0)
-])
-def test_parse_number_success(s, expected):
-    assert parse_number(s) == expected
+def test_validate_numbers_ok():
+    nums = validate_numbers('1','2.5')
+    assert nums == [1.0,2.5]
 
-def test_parse_number_fail():
-    with pytest.raises(CalculatorError):
-        parse_number('notanumber')
-
-def test_parse_tokens():
-    assert parse_tokens(' + 1 2 ') == ['+','1','2']
+def test_validate_numbers_bad():
+    with pytest.raises(InvalidOperationError):
+        validate_numbers('a', '2')

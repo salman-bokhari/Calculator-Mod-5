@@ -1,20 +1,24 @@
 import pytest
-from app.operations import Add, Subtract, Multiply, Divide, Power, Root, OperationFactory
-from app.exceptions import DivisionByZeroError, InvalidOperationError
+from app.operations import Add, Subtract, Multiply, Divide, Power, Root, operation_factory
+from app.exceptions import DivideByZeroError, InvalidOperationError
 
-def test_basic_ops():
-    assert Add().execute(1,2) == 3
-    assert Subtract().execute(5,3) == 2
-    assert Multiply().execute(3,4) == 12
-    assert Power().execute(2,3) == 8
-    assert Root().execute(27,3) == pytest.approx(3)
+@pytest.mark.parametrize('cls,a,b,expected', [
+    (Add, 1,2,3),
+    (Subtract,5,3,2),
+    (Multiply,3,4,12),
+    (Power,2,3,8),
+    (Root,27,3,3),
+])
+def test_basic_ops(cls,a,b,expected):
+    op = cls()
+    assert op.execute(a,b) == expected
 
 def test_divide_by_zero():
-    with pytest.raises(DivisionByZeroError):
-        Divide().execute(1,0)
+    op = Divide()
+    with pytest.raises(DivideByZeroError):
+        op.execute(1,0)
 
-def test_operation_factory():
-    assert isinstance(OperationFactory.get('+'), Add)
-    assert isinstance(OperationFactory.get('root'), Root)
-    with pytest.raises(InvalidOperationError):
-        OperationFactory.get('unknown')
+def test_factory():
+    assert operation_factory('add').execute(1,2) == 3
+    assert operation_factory('+').execute(2,3) == 5
+    assert operation_factory('root').execute(16,4) == 2

@@ -1,19 +1,9 @@
-from .exceptions import CalculatorError
+from .exceptions import InvalidOperationError
 
-def parse_tokens(line: str):
-    """Parse input line into tokens. Expected: <op> <a> <b> or commands."""
-    tokens = line.strip().split()
-    return tokens
-
-def parse_number(s: str):
-    # LBYL example
-    try:
-        if '.' in s:
-            return float(s)
-        return int(s)
-    except ValueError:
-        # EAFP example: try converting with float
+def validate_numbers(*args):
+    for a in args:
         try:
-            return float(s)
-        except Exception as e:
-            raise CalculatorError(f"Invalid number: {s}") from e
+            float(a)
+        except Exception:
+            raise InvalidOperationError(f"Invalid number: {a}")
+    return [float(a) for a in args]

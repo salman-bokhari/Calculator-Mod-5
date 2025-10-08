@@ -6,11 +6,11 @@ load_dotenv()
 class ConfigError(Exception):
     pass
 
-class CalculatorConfig:
+class Config:
     def __init__(self):
-        self.history_csv = os.getenv('HISTORY_CSV', 'history.csv')
-        self.auto_save = os.getenv('AUTO_SAVE', 'true').lower() in ('1','true','yes')
-
-        # validate
-        if not self.history_csv:
-            raise ConfigError('HISTORY_CSV must be set')
+        self.history_file = os.getenv('CALC_HISTORY', 'history.csv')
+        try:
+            if not isinstance(self.history_file, str):
+                raise ConfigError('Invalid history file config')
+        except Exception as e:
+            raise ConfigError(e)

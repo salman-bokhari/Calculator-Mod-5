@@ -1,9 +1,9 @@
 class CalculatorError(Exception):
-    """Base class for calculator exceptions."""
+    """Base calculator exception."""
     pass
 
 class InvalidOperationError(CalculatorError):
     pass
 
-class DivisionByZeroError(CalculatorError):
+class DivideByZeroError(CalculatorError):
     pass

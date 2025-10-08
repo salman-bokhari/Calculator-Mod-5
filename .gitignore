@@ -1,7 +1,8 @@
-# Python cache
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-# Virtual environment
 venv/
+__pycache__/
+.env
+history.csv

@@ -1,13 +1,13 @@
-import os
 import pandas as pd
-from app.history import HistoryManager
+from app.history import History
+import tempfile, os
 
-def test_history_add_save_load(tmp_path):
+def test_add_and_save_load(tmp_path):
+    h = History()
+    h.add(1,'add',2,3,'t')
     p = tmp_path / 'h.csv'
-    hm = HistoryManager(csv_path=str(p), auto_save=False)
-    hm.add('+',1,2,3)
-    assert not hm.df.empty
-    hm.save()
-    hm2 = HistoryManager(csv_path=str(p), auto_save=False)
-    assert not hm2.df.empty
-    os.remove(str(p))
+    h.save(p)
+    h2 = History()
+    h2.load(p)
+    assert len(h2.df) == 1
+    assert h2.df.iloc[0]['result'] == 3

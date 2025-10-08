@@ -1,9 +1,9 @@
 class Memento:
     def __init__(self, state):
-        self._state = state.copy(deep=True) if hasattr(state, 'copy') else state
+        self._state = state.copy()
 
     def get_state(self):
-        return self._state
+        return self._state.copy()
 
 class Caretaker:
     def __init__(self):
@@ -14,16 +14,16 @@ class Caretaker:
         self._undo_stack.append(memento)
         self._redo_stack.clear()
 
-    def undo(self):
+    def undo(self, current_state):
         if not self._undo_stack:
             return None
         m = self._undo_stack.pop()
-        self._redo_stack.append(m)
+        self._redo_stack.append(Memento(current_state))
         return m
 
     def redo(self):
         if not self._redo_stack:
             return None
         m = self._redo_stack.pop()
-        self._undo_stack.append(m)
+        self._undo_stack.append(Memento(m.get_state()))
         return m

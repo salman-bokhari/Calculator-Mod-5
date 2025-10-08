@@ -1,1 +1,1 @@
-__all__ = []
+'''Enhanced Calculator Application package'''
