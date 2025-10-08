@@ -39,8 +39,8 @@ def main(interactive=True, commands=None):
                 results.append(str(e))
         return results
 
+    # pragma: no cover start
     # Interactive mode for manual use
-    # pragma: no cover
     while True:
         try:
             num1 = input("Enter first number: ")
@@ -63,3 +63,4 @@ def main(interactive=True, commands=None):
             print(f"Error: {e}")
         except Exception as e:
             print(f"Unexpected error: {e}")
+    # pragma: no cover end
